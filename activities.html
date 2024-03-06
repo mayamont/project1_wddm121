@@ -30,6 +30,7 @@
       background-color: #ffffff;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      position: relative; /* Added position relative for absolute positioning */
     }
 
     .card-body {
@@ -38,10 +39,21 @@
 
     h5 {
       color: #007bff;
+      margin-bottom: 10px; /* Added margin to separate text from image */
     }
 
     p {
       color: #495057;
+    }
+
+    /* Add custom styles for activity images */
+    .activity-image {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+      position: absolute;
+      top: 20px;
+      right: 20px;
     }
   </style>
 </head>
@@ -71,7 +83,7 @@
     <h1>Activities</h1>
     
     <!-- Display one example activity -->
-    <div id="activity-cards" class="card-columns"></div>
+    <div class="card-columns" id="activity-cards"></div>
 
     <!-- Add a button to view more activities -->
     <button id="viewMoreButton" class="btn btn-primary mt-3">View More Activities</button>
@@ -107,15 +119,38 @@
         });
     }
 
-    // Function to create activity cards
+    // Function to create activity cards with images
     function createActivityCard(activity, weatherDescription) {
       const cardContainer = $('#activity-cards');
 
       const card = $('<div>').addClass('card');
       const cardBody = $('<div>').addClass('card-body');
 
+      // Add custom image based on the activity type
+      let imagePath;
+      switch (activity.toLowerCase()) {
+        case 'exercise':
+          imagePath = './fitness (1).png';
+          break;
+        case 'read a book':
+          imagePath = './traveller (1).png';
+          break;
+        case 'cook a meal':
+          imagePath = './yoga.png';
+          break;
+        case 'watch a movie':
+          imagePath = './lotus.png';
+          break;
+        // Add more cases for other activities as needed
+        default:
+          imagePath = './fitness (1).png';
+      }
+
       cardBody.html(`
-        <h5 class="card-title">${activity}</h5>
+        <h5 class="card-title">
+          <span class="activity-image"><img src="${imagePath}" alt="${activity}" class="activity-image"></span>
+          ${activity}
+        </h5>
         <p class="card-text">Weather: ${weatherDescription}</p>
       `);
 
