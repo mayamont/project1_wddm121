@@ -69,7 +69,12 @@
 
   <div class="container mt-4">
     <h1>Activities</h1>
+    
+    <!-- Display one example activity -->
     <div id="activity-cards" class="card-columns"></div>
+
+    <!-- Add a button to view more activities -->
+    <button id="viewMoreButton" class="btn btn-primary mt-3">View More Activities</button>
   </div>
 
   <!-- Bootstrap JS and jQuery -->
@@ -118,13 +123,29 @@
       cardContainer.append(card);
     }
 
-    // Fetch random activity, weather, and create cards
+    // Function to handle view more button click
+    $('#viewMoreButton').on('click', function () {
+      // Fetch new random activity and weather
+      fetchRandomActivity().then(activity => {
+        // Replace these coordinates with your desired location
+        const locationLat = '43.7281';
+        const locationLon = '-79.6072';
+
+        fetchWeather(locationLat, locationLon).then(weatherDescription => {
+          // Create and display the new activity card
+          createActivityCard(activity, weatherDescription);
+        });
+      });
+    });
+
+    // Fetch and display an initial random activity on page load
     fetchRandomActivity().then(activity => {
       // Replace these coordinates with your desired location
       const locationLat = '43.7281';
       const locationLon = '-79.6072';
 
       fetchWeather(locationLat, locationLon).then(weatherDescription => {
+        // Create and display the initial activity card
         createActivityCard(activity, weatherDescription);
       });
     });
