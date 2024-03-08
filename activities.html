@@ -97,7 +97,6 @@
         case 'watch a movie':
           imagePath = './lotus.png';
           break;
-        // Add more cases for other activities as needed
         default:
           imagePath = './fitness (1).png';
       }
@@ -118,9 +117,8 @@
     $('#viewMoreButton').on('click', function () {
       // Fetch new random activity and weather
       fetchRandomActivity().then(activity => {
-        // Replace these coordinates with your desired location
-        const locationLat = '43.7281';
-        const locationLon = '-79.6072';
+        const locationLat = (Math.random() * (90 - (-90)) + (-90)).toFixed(4);
+        const locationLon = (Math.random() * (180 - (-180)) + (-180)).toFixed(4);
 
         fetchWeather(locationLat, locationLon).then(weatherDescription => {
           // Create and display the new activity card
@@ -131,9 +129,9 @@
 
     // Fetch and display an initial random activity on page load
     fetchRandomActivity().then(activity => {
-      // Replace these coordinates with your desired location
-      const locationLat = '43.7281';
-      const locationLon = '-79.6072';
+
+      const locationLat = (Math.random() * (90 - (-90)) + (-90)).toFixed(4);
+      const locationLon = (Math.random() * (180 - (-180)) + (-180)).toFixed(4);
 
       fetchWeather(locationLat, locationLon).then(weatherDescription => {
         // Create and display the initial activity card
