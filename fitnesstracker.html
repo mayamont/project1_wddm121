@@ -76,7 +76,18 @@
         <ul id="activitiesList"></ul>
     </div>
     
-    
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#logActivityForm').submit(function(e) {
+                e.preventDefault();
+                const activityType = $('#activityType').val();
+                const activityDuration = $('#activityDuration').val();
+                $('#activitiesList').append(`<li>${activityType}: ${activityDuration} minutes</li>`);
+                $('#activityDuration').val(''); 
+            });
+        });
     </script>
     </body>
     </html>
