@@ -34,31 +34,32 @@
     </div>
 </nav>
 
-  <div class="container">
-    <h1>Workout Graph</h1>
 
-    <div class="row">
-      <!-- Graph 1: Minutes of Workout -->
-      <div class="col-md-6 chart-container">
-        <h2>Minutes of Workout</h2>
-        <canvas id="workout-chart" width="400" height="200"></canvas>
-      </div>
+<div class="container">
+  <h1>Workout Graph</h1>
 
-      <!-- Graph 2: Pie Chart for Workout Types -->
-      <div class="col-md-6 chart-container">
-        <h2>Workout Types</h2>
-        <canvas id="workout-types-chart" width="400" height="200"></canvas>
-      </div>
+  <div class="row">
+    <!-- Graph 1: Minutes of Workout -->
+    <div class="col-md-6 chart-container">
+      <h2>Minutes of Workout</h2>
+      <canvas id="workout-chart" width="400" height="200"></canvas>
     </div>
 
-    <!-- Graph 3: Progress Bar Chart -->
-    <div class="chart-container">
-      <h2>Progress Tracker</h2>
-      <div class="progress">
-        <div class="progress-bar" role="progressbar" style="width: 70%;" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">70%</div>
-      </div>
+    <!-- Graph 2: Pie Chart for Workout Types -->
+    <div class="col-md-6 chart-container">
+      <h2>Workout Types</h2>
+      <canvas id="workout-types-chart" width="400" height="200"></canvas>
     </div>
   </div>
+
+  <!-- Graph 3: Progress Bar Chart -->
+  <div class="chart-container">
+    <h2>Progress Tracker</h2>
+    <div class="progress">
+      <div class="progress-bar" role="progressbar" style="width: 70%;" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">70%</div>
+    </div>
+  </div>
+</div>
 
   <script>
     // Function to generate random data for workout graphs
