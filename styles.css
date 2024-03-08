@@ -41,7 +41,40 @@ html, body {
   transform: translateX(36%); 
   font-size: 1.3em;
   }
-  
+  #activity-cards {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+  .card {
+    width: 300px;
+    margin: 10px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative; /* Added position relative for absolute positioning */
+  }
+
+  .card-body {
+    padding: 20px;
+  }
+  h5 {
+    color: #007bff;
+    margin-bottom: 10px; /* Added margin to separate text from image */
+  }
+
+    /* Add custom styles for activity images */
+  .activity-image {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    }
+
 
 .footer-container {
     margin-top: 40px;
