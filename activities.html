@@ -50,6 +50,7 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
   <script>
+
     // Function to fetch random activities
     function fetchRandomActivity() {
       const activityApiUrl = 'https://www.boredapi.com/api/activity';
@@ -62,17 +63,7 @@
         });
     }
 
-    // Function to fetch weather information
-    function fetchWeather(lat, lon) {
-      const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=3272cd8a223d8c3a6bdc4b51211551e4`;
 
-      return $.getJSON(weatherApiUrl)
-        .then(weatherData => weatherData.weather[0].description)
-        .catch(error => {
-          console.error('Error fetching weather data:', error);
-          return null;
-        });
-    }
 
     // Function to create activity cards with images
     function createActivityCard(activity, weatherDescription) {
