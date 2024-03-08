@@ -67,7 +67,6 @@
 </footer>
   <!-- Bootstrap JS -->
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
   <script>
     // Fetch user information from the Random User Generator API
     const userApiUrl = 'https://randomuser.me/api/';
@@ -82,7 +81,6 @@
           <p>Name: ${user.name.first} ${user.name.last}</p>
           <p>Email: ${user.email}</p>
           <p>Gender: ${user.gender}</p>
-          <!-- Add more user information as needed -->
         `);
       },
       error: function(error) {
