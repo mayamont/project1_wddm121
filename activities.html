@@ -1,0 +1,166 @@
+<!-- activities.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activities</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="styles.css" />
+</head>
+<body>
+ <!-- Navbar -->
+ <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+              <li class="nav-item active">
+              <a class="nav-link" href="fitnesstracker.html">Exercise Tracker</a>
+          </li>
+          <li class="nav-item active">
+              <a class="nav-link" href="profile.html">Profile</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="activities.html">Activities</a>
+          </li>
+          <li class="nav-item active">
+              <a class="nav-link" href="workout-graph.html">Workout Graph</a>
+            </li>
+      </ul>
+  </div>
+</nav>
+</nav>
+
+  <div class="container mt-4">
+    <h1>Activities</h1>
+    
+    <!-- Display one example activity -->
+    <div class="card-columns" id="activity-cards"></div>
+
+    <!-- Add a button to view more activities -->
+    <button id="viewMoreButton" class="btn btn-primary mt-3">View More Activities</button>
+  </div>
+
+  <!-- Bootstrap JS and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+
+    // Function to fetch random activities
+    function fetchRandomActivity() {
+      const activityApiUrl = 'https://www.boredapi.com/api/activity';
+
+      return $.getJSON(activityApiUrl)
+        .then(activityData => activityData.activity)
+        .catch(error => {
+          console.error('Error fetching random activity:', error);
+          return null;
+        });
+    }
+
+    // Function to fetch weather information
+    function fetchWeather(lat, lon) {
+      const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=3272cd8a223d8c3a6bdc4b51211551e4`;
+
+      return $.getJSON(weatherApiUrl)
+        .then(weatherData => weatherData.weather[0].description)
+        .catch(error => {
+          console.error('Error fetching weather data:', error);
+          return null;
+        });
+    }
+
+    // Function to create activity cards with images
+    function createActivityCard(activity, weatherDescription) {
+      const cardContainer = $('#activity-cards');
+
+      const card = $('<div>').addClass('card');
+      const cardBody = $('<div>').addClass('card-body');
+
+      // Add custom image based on the activity type
+      let imagePath;
+      switch (activity.toLowerCase()) {
+        case 'exercise':
+          imagePath = './fitness (1).png';
+          break;
+        case 'read a book':
+          imagePath = './traveller (1).png';
+          break;
+        case 'cook a meal':
+          imagePath = './yoga.png';
+          break;
+        case 'watch a movie':
+          imagePath = './lotus.png';
+          break;
+        default:
+          imagePath = './fitness (1).png';
+      }
+
+      cardBody.html(`
+        <h5 class="card-title">
+          <span class="activity-image"><img src="${imagePath}" alt="${activity}" class="activity-image"></span>
+          ${activity}
+        </h5>
+        <p class="card-text">Weather: ${weatherDescription}</p>
+      `);
+
+      card.append(cardBody);
+      cardContainer.append(card);
+    }
+
+    // Function to handle view more button click
+    $('#viewMoreButton').on('click', function () {
+      // Fetch new random activity and weather
+      fetchRandomActivity().then(activity => {
+        const locationLat = (Math.random() * (90 - (-90)) + (-90)).toFixed(4);
+        const locationLon = (Math.random() * (180 - (-180)) + (-180)).toFixed(4);
+
+        fetchWeather(locationLat, locationLon).then(weatherDescription => {
+          // Create and display the new activity card
+          createActivityCard(activity, weatherDescription);
+        });
+      });
+    });
+
+    // Fetch and display an initial random activity on page load
+    fetchRandomActivity().then(activity => {
+
+      const locationLat = (Math.random() * (90 - (-90)) + (-90)).toFixed(4);
+      const locationLon = (Math.random() * (180 - (-180)) + (-180)).toFixed(4);
+
+      fetchWeather(locationLat, locationLon).then(weatherDescription => {
+        // Create and display the initial activity card
+        createActivityCard(activity, weatherDescription);
+      });
+    });
+  </script>
+  <footer class="footer-container">
+    <div class="footer-columns">
+        
+        <div class="footer-column">
+            <h3>Quick links</h3>
+            <ul>
+                <li><a href="fitnesstracker.html">Home</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="activities.html">Activities</a></li>
+                <li><a href="workout-graph.html">Workout Graph</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h3>Get in touch</h3>
+            <p>Email: exercisetracker@info.com</p>
+            <p>Phone: +1 (643) 335-302X</p>
+        </div>
+        <div class="footer-column">
+            <p>&copy; 2024 Joao, Mariana, Mayara. All Rights Reserved.</p>
+
+        </div>
+    </div>
+</footer>
+</body>
+</html>
