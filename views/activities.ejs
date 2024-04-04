@@ -1,4 +1,9 @@
-<div class="container mt-4">
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="../public/css/styles.css" />
+
+
+  <div class="container mt-4">
     <h1>Activities</h1>
     
     <!-- Display one example activity -->
@@ -50,19 +55,19 @@
       let imagePath;
       switch (activity.toLowerCase()) {
         case 'exercise':
-          imagePath = './fitness (1).png';
+          imagePath = '../assets/fitness.png';
           break;
         case 'read a book':
-          imagePath = './traveller (1).png';
+          imagePath = '../assets/traveller.png';
           break;
         case 'cook a meal':
-          imagePath = './yoga.png';
+          imagePath = '../assets/yoga.png';
           break;
         case 'watch a movie':
-          imagePath = './lotus.png';
+          imagePath = '../assets/lotus.png';
           break;
         default:
-          imagePath = './fitness (1).png';
+          imagePath = '../assets/fitness.png';
       }
 
       cardBody.html(`
@@ -103,3 +108,4 @@
       });
     });
   </script>
+
