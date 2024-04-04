@@ -27,7 +27,9 @@ const signUp = () => {
     .then((result) => {
         //If successfully created user 
         document.write("You are Signed Up")
-        console.log(result)
+        setTimeout(() => {
+            window.location.href = "/signIn"
+        }, 1400)
     })
     .catch((error) => {
         //If unsuccessfully created user 
@@ -35,6 +37,7 @@ const signUp = () => {
         console.log(error.message)
     })
 }
+
 
 const signIn = () => {
     //Allow us to sign in
@@ -45,7 +48,7 @@ const signIn = () => {
     .then((result) => {
         //Signed IN
         document.write("You are Signed In")
-        setTimeout(() => window.location.href = "/", 1500)
+        setTimeout(() => window.location.href = "/", 1400)
     })
     .catch((error) => {
         console.log(error.code)
