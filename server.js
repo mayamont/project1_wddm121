@@ -48,8 +48,6 @@ app.get("/workoutGraph", async function (req, res) {
     });
 });
 
-//get sign in and sign up
-
 app.get("/signIn", async function (req, res) {
     res.render('signin', {
         title: 'Sign In',
@@ -64,3 +62,5 @@ app.get("/signUp", async function (req, res) {
     });
 
 });
+
+
