@@ -45,10 +45,11 @@ const signIn = () => {
     .then((result) => {
         //Signed IN
         document.write("You are Signed In")
-        console.log(result)
+        setTimeout(() => window.location.href = "/", 1500)
     })
     .catch((error) => {
         console.log(error.code)
         console.log(error.message)
     })
 }
+
