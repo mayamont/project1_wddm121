@@ -1,8 +1,33 @@
 <div class="container mt-4">
-    <h1>User Profile</h1>
-    <div id="user-info" class="card">
-      <div class="card-body">
+  <h1>User Profile</h1>
+  <div id="user-info" class="card">
+    <div class="card-body">
         <p class="card-text" id="user-details"></p>
-      </div>
     </div>
   </div>
+</div>
+
+<!-- Bootstrap JS -->
+
+<script>
+  // Fetch user information from the Random User Generator API
+  const userApiUrl = 'https://randomuser.me/api/';
+  
+  // Fetch user data and display it
+  $.ajax({
+    url: userApiUrl,
+    dataType: 'json',
+  }).then(userData => {
+    const user = userData.results[0];
+    $('#user-details').html(`
+      <p class="mb-0">Name: ${user.name.first} ${user.name.last}</p>
+      <p class="mb-0">Email: <a href="mailto:${user.email}">${user.email}</a></p>
+      <p class="mb-0">Gender: ${user.gender}</p>
+    `);
+  }).catch(error => {
+    console.error('Error fetching user data:', error);
+  });
+</script>
+
+
+
