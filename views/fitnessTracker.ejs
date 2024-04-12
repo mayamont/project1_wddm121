@@ -45,50 +45,80 @@
 </script>
 
 
+<div class="container py-4">
+    <h1 class="mb-3">Record your exercise</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4 first-row">
+                <div class="card-body">
+                    <h2 class="card-title">Log Activity</h2>
+                    <form id="logActivityForm">
+                        <div class="mb-3">
+                            <label for="activityType" class="form-label">Activity Type</label>
+                            <select class="form-select" id="activityType">
+                                <option>Running</option>
+                                <option>Cycling</option>
+                                <option>Swimming</option>
+                                <option>Walking</option>
+                                <option>Weight Machine</option>
+                                <option>Yoga</option>
+                                <option>Threadmill</option>
+                                <option>Hiking</option>
+                                <option>Eliptical trainer</option>
+                                <option>Martial Arts</option>
+                                <option>Pilates</option>
+                                <option>Rock Climbing</option>
+                                <option>Skiing/Snowboarding</option>
+                                <option>CrossFit</option>
+                                <option>Parkour</option>
+                                <option>Surfing</option>
+                                <option>Dance</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="activityDuration" class="form-label">Duration (minutes)</label>
+                            <input type="number" class="form-control" id="activityDuration" placeholder="Enter duration">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Log Activity</button>
+                    </form>
+              </div>
+            </div>
 
-<div class="container">
-    <h1>Record your exercise</h1>
-    
-</div>
-
-<div class="container form-section">
-    <h2>Log Activity</h2>
-    <form id="logActivityForm">
-        <div class="form-group">
-            <label for="activityType">Activity Type</label>
-            <select class="form-control" id="activityType">
-                <option>Running</option>
-                <option>Cycling</option>    
-                <option>Swimming</option>
-                <option>Walking</option>
-                <option>Weight Machine</option>
-                <option>Yoga</option>
-                <option>Threadmill</option>
-                <option>Hiking</option>
-                <option>Eliptical trainer</option>
-                <option>Marcial Arts</option>
-                <option>Pilates</option>
-                <option>Rock Climbing</option>
-                <option>Skiing/Snowboarding</option>
-                <option>CrossFit</option>
-                <option>Parkour</option>
-                <option>Surfing</option>
-                <option>Dance</option>
-
-            </select>
+            <div class="card width-row">
+                <div class="card-body">
+                    <h2 class="card-title">Logged Activities</h2>
+                    <ul id="activitiesList" class="list-group list-group-flush"></ul>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="activityDuration">Duration (minutes)</label>
-            <input type="number" class="form-control" id="activityDuration" placeholder="Enter duration">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">Upload Image</h2>
+                    <form id="imageUploadForm">
+                        <div class="mb-3">
+                            <label for="activityImage" class="form-label">Upload Image</label>
+                            <input type="file" class="form-control" id="activityImage" accept="image/*">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload Image</button>
+                        <button type="button" class="btn btn-danger" id="deleteLastImage" onclick="deleteLastImage()">Delete Last Image</button>
+                    </form>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h3>Latest Uploaded Image</h3>
+                    <div id="latestImageDisplay" class="mb-3">
+                        <!-- Image will be inserted here via JavaScript -->
+                    </div>
+                    <p>Uploaded on: <span id="uploadDateTime"></span></p>
+                </div>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary">Log Activity</button>
-    </form>
+    </div>
 </div>
 
-<div class="container">
-    <h2>Logged Activities</h2>
-    <ul id="activitiesList"></ul>
-</div>
+
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
@@ -118,7 +148,12 @@
 </script>
 
 <style>
-    html, body {
+  
+  .width-row {
+    min-width: 70%;
+  }
+
+  html, body {
     height: 100%; /* Make sure the html and body tags take up the full viewport height */
     margin: 0; 
   }
@@ -191,11 +226,28 @@
     top: 20px;
     right: 20px;
     }
-    .chart-container {
-        margin-top: 20px;
-        background-color: #ffffff;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        padding: 15px;
-      }
+  .chart-container {
+    margin-top: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+  }
+  .right-column {
+    /* This ensures that the right column only takes up the necessary space */
+    flex: 1;
+    max-width: 50%;
+    padding-left: 10px; /* Or any appropriate value */
+  }
+
+  .latest-upload-container {
+    /* Your existing styles for the latest uploaded image container */
+    /* ... */
+  }
+
+  /* Ensure that the button to delete the last image doesn't inherit any unwanted styles */
+  #deleteLastImage {
+    /* Add specific styles for the delete button here if needed */
+  }  
+   
 </style>
