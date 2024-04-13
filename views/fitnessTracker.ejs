@@ -1,9 +1,10 @@
 <script type="module">
   // Import the functions you need from the SDKs you need
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js';
-  import { getDatabase, ref, push, serverTimestamp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js';
+  import { getStorage, ref as sRef, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js';
+  import { getDatabase, ref, set, push, serverTimestamp, onValue, query, limitToLast, orderByChild } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js';
 
-  // Your web app's Firebase configuration
+  //  Firebase configuration
   const firebaseConfig = {
   apiKey: "AIzaSyA4_6V_As_tAIblAB5ayqLn2rM6prI8nd4",
   authDomain: "project2-wddm121.firebaseapp.com",
@@ -13,10 +14,194 @@
   messagingSenderId: "518598888270",
   appId: "1:518598888270:web:55e09985d82d5fdfe96c1f",
   measurementId: "G-KN889DJYG3"
-  }
+  };
 
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
+  const storage = getStorage (app);
+  const db = getDatabase(app);
+
+  // Upload Image
+  const imageUploadForm = document.getElementById('imageUploadForm');
+  imageUploadForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const file = document.getElementById('activityImage').files[0];
+    const storageRef = sRef(storage, `images/${file.name}`);
+
+    try {
+        const snapshot = await uploadBytes(storageRef, file);
+        const downloadURL = await getDownloadURL(snapshot.ref);
+
+        // Update the database with the new image URL and timestamp
+        const imagesRef = ref(db, 'latestImage');
+        await push(imagesRef, {
+            imageUrl: downloadURL,
+            timestamp: serverTimestamp()
+        });
+
+        console.log('File available at', downloadURL);
+        document.getElementById('latestImageDisplay').innerHTML = `<img src="${downloadURL}" class="img-fluid" alt="Uploaded Image">`;
+    } catch (error) {
+        console.error('Error uploading image:', error);
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const db = getDatabase(); // Ensure you have initialized your Firebase app and database
+    const latestImageRef = ref(db, 'latestImage');
+    
+    onValue(latestImageRef, (snapshot) => {
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            const { imageUrl, timestamp } = data || {};
+            const readableTimestamp = timestamp && new Date(timestamp).toLocaleString(); // Convert the timestamp to a readable format
+
+            document.getElementById('latestImageDisplay').innerHTML = imageUrl ? `<img src="${imageUrl}" class="img-fluid" alt="Latest Uploaded Image">` : '';
+            document.getElementById('uploadDateTime').textContent = readableTimestamp ? `Uploaded on: ${readableTimestamp}` : '';
+        } else {
+            console.log("No latest image data available");
+        }
+    }, {
+        onlyOnce: true // This option makes sure the listener is only triggered once
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Access the delete button by its ID
+    const deleteButton = document.getElementById('deleteLastImage');
+    
+    // Check if the button exists to avoid null reference errors
+    if (deleteButton) {
+        // Add the event listener to the delete button
+        deleteButton.addEventListener('click', deleteLastImage);
+    }
+
+    // Add any other initializations or event listeners you need below
+  });
+
+  async function deleteLastImage() {
+    // Your function logic to handle the image deletion
+    console.log("Delete last image button clicked");
+
+    // Example logic to delete an image (implement according to your project requirements)
+    try {
+        // Assume you have a function to get the last image reference
+        const imageRef = await getLastImageRef(); // This should be another function that returns the ref
+        await deleteObject(imageRef);
+        console.log("Image deleted successfully");
+    } catch (error) {
+        console.error("Error deleting the image: ", error);
+    }
+}
+
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const imagesRef = ref(db, 'latestImage');
+    onValue(query(imagesRef, limitToLast(1)), (snapshot) => {
+        if (snapshot.exists()) {
+            const data = Object.values(snapshot.val())[0]; // Getting the last uploaded image data
+            if (data.imageUrl) {
+                document.getElementById('latestImageDisplay').innerHTML = `<img src="${data.imageUrl}" class="img-fluid">`;
+                const timestamp = new Date(data.timestamp).toLocaleString(); // Converting timestamp
+                document.getElementById('uploadDateTime').textContent = `Uploaded on: ${timestamp}`;
+            }
+        } else {
+            console.log("No data available");
+        }
+    });
+  });
+
+
+  // Function to log activity to Firebase
+  async function logActivityToFirebase(activityType, activityDuration) {
+    const activitiesRef = ref(db, 'activities');
+    await push(activitiesRef, {
+      type: activityType,
+      duration: activityDuration,
+      timestamp: serverTimestamp() // Correct way to get server timestamp
+    }).then(() => {
+      console.log('Activity logged successfully');
+    }).catch((error) => {
+      console.error('Error logging activity:', error);
+    });
+  }
+
+  console.log('Logging activity:', {activityType, activityDuration});
+
+  // Call the function to log activity after the form is submitted
+  document.getElementById('logActivityForm').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const activityType = document.getElementById('activityType').value;
+    const activityDuration = document.getElementById('activityDuration').value;
+    logActivityToFirebase(activityType, activityDuration);
+  });
+
+  async function deleteLastImage() {
+    const storage = getStorage(app);
+    const db = getDatabase(app);
+    const imagesRef = ref(db, 'latestImage');
+
+    const queryRef = query(imagesRef, orderByChild('timestamp'), limitToLast(1));
+    onValue(queryRef, async (snapshot) => {
+        if (snapshot.exists()) {
+            const data = Object.values(snapshot.val()).pop(); // assuming data is correctly retrieved
+            const imageRef = sRef(storage, data.imageUrl);
+            try {
+                await deleteObject(imageRef);
+                console.log('Image successfully deleted');
+                // Further UI updates or state changes here
+            } catch (error) {
+                console.error('Error deleting image:', error);
+            }
+        } else {
+            console.log('No image found to delete.');
+        }
+    }, {
+        onlyOnce: true
+    });
+  }
+
+ 
+
+  
+  // Query for the last image
+  const queryRef = query(latestImageRef, orderByChild('timestamp'), limitToLast(1));
+
+  onValue(queryRef, async (snapshot) => {
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      const key = Object.keys(data)[0]; // Get the key of the last image
+      const imageUrl = data[key].imageUrl;
+
+      // Create a reference to the file to delete
+      const fileRef = sRef(storage, imageUrl);
+
+      try {
+        // Delete the file
+        await deleteObject(fileRef);
+
+        // Delete the database entry
+        const dbRef = ref(db, `latestImage/${key}`);
+        await set(dbRef, null);
+
+        console.log('Image deleted successfully');
+        document.getElementById('latestImageDisplay').innerHTML = '';
+        document.getElementById('uploadDateTime').textContent = '';
+      } catch (error) {
+        console.error('Error deleting image:', error);
+      }
+    } else {
+      console.log("No latest image data available for deletion.");
+    }
+  }, {
+    onlyOnce: true
+  });
+  
+
+  /*legacy code
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const storage = getStorage (app);
   const db = getDatabase(app);
 
   // Function to log activity to Firebase
@@ -42,6 +227,7 @@
     const activityDuration = document.getElementById('activityDuration').value;
     logActivityToFirebase(activityType, activityDuration);
   });
+  */
 </script>
 
 
@@ -49,7 +235,7 @@
     <h1 class="mb-3">Record your exercise</h1>
     <div class="row">
         <div class="col-md-6">
-            <div class="card mb-4 first-row">
+            <div class="card mb-4 width-row">
                 <div class="card-body">
                     <h2 class="card-title">Log Activity</h2>
                     <form id="logActivityForm">
@@ -92,26 +278,26 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card mb-4">
+            <div class="card mb-4 width-row">
                 <div class="card-body">
-                    <h2 class="card-title">Upload Image</h2>
+                    <h2 class="card-title">Check-in with image</h2>
                     <form id="imageUploadForm">
                         <div class="mb-3">
                             <label for="activityImage" class="form-label">Upload Image</label>
                             <input type="file" class="form-control" id="activityImage" accept="image/*">
                         </div>
                         <button type="submit" class="btn btn-primary">Upload Image</button>
-                        <button type="button" class="btn btn-danger" id="deleteLastImage" onclick="deleteLastImage()">Delete Last Image</button>
+                        <button type="button" class="btn btn-danger" id="deleteLastImage" id="deleteLastImage">Delete Last Image</button>
                     </form>
                 </div>
             </div>
-            <div class="card">
+            <div class="card width-row">
                 <div class="card-body">
-                    <h3>Latest Uploaded Image</h3>
+                    <h2>Latest Check-in</h2>
                     <div id="latestImageDisplay" class="mb-3">
                         <!-- Image will be inserted here via JavaScript -->
                     </div>
-                    <p>Uploaded on: <span id="uploadDateTime"></span></p>
+                    <p><span id="uploadDateTime"></span></p>
                 </div>
             </div>
         </div>
@@ -150,7 +336,7 @@
 <style>
   
   .width-row {
-    min-width: 70%;
+    min-width: 80%;
   }
 
   html, body {
@@ -251,3 +437,4 @@
   }  
    
 </style>
+
