@@ -70,9 +70,6 @@ onAuthStateChanged(auth, user => {
         // Additional user info or redirect can be handled here if needed
     } else {
         console.log("No user is signed in.");
-        // Optionally redirect to login page if not on it
-        if (window.location.pathname !== '/signIn') {
-            window.location.href = '/signIn';
-        }
+       
     }
 });
