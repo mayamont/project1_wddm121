@@ -1,0 +1,201 @@
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js';
+  import { getDatabase, ref, push, serverTimestamp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js';
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+  apiKey: "AIzaSyA4_6V_As_tAIblAB5ayqLn2rM6prI8nd4",
+  authDomain: "project2-wddm121.firebaseapp.com",
+  databaseURL: "https://project2-wddm121-default-rtdb.firebaseio.com",
+  projectId: "project2-wddm121",
+  storageBucket: "project2-wddm121.appspot.com",
+  messagingSenderId: "518598888270",
+  appId: "1:518598888270:web:55e09985d82d5fdfe96c1f",
+  measurementId: "G-KN889DJYG3"
+  }
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // Function to log activity to Firebase
+  async function logActivityToFirebase(activityType, activityDuration) {
+    const activitiesRef = ref(db, 'activities');
+    await push(activitiesRef, {
+      type: activityType,
+      duration: activityDuration,
+      timestamp: serverTimestamp() // Correct way to get server timestamp
+    }).then(() => {
+      console.log('Activity logged successfully');
+    }).catch((error) => {
+      console.error('Error logging activity:', error);
+    });
+  }
+
+  console.log('Logging activity:', {activityType, activityDuration});
+
+  // Call the function to log activity after the form is submitted
+  document.getElementById('logActivityForm').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const activityType = document.getElementById('activityType').value;
+    const activityDuration = document.getElementById('activityDuration').value;
+    logActivityToFirebase(activityType, activityDuration);
+  });
+</script>
+
+
+
+<div class="container">
+    <h1>Record your exercise</h1>
+    
+</div>
+
+<div class="container form-section">
+    <h2>Log Activity</h2>
+    <form id="logActivityForm">
+        <div class="form-group">
+            <label for="activityType">Activity Type</label>
+            <select class="form-control" id="activityType">
+                <option>Running</option>
+                <option>Cycling</option>    
+                <option>Swimming</option>
+                <option>Walking</option>
+                <option>Weight Machine</option>
+                <option>Yoga</option>
+                <option>Threadmill</option>
+                <option>Hiking</option>
+                <option>Eliptical trainer</option>
+                <option>Marcial Arts</option>
+                <option>Pilates</option>
+                <option>Rock Climbing</option>
+                <option>Skiing/Snowboarding</option>
+                <option>CrossFit</option>
+                <option>Parkour</option>
+                <option>Surfing</option>
+                <option>Dance</option>
+
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="activityDuration">Duration (minutes)</label>
+            <input type="number" class="form-control" id="activityDuration" placeholder="Enter duration">
+        </div>
+        <button type="submit" class="btn btn-primary">Log Activity</button>
+    </form>
+</div>
+
+<div class="container">
+    <h2>Logged Activities</h2>
+    <ul id="activitiesList"></ul>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Find the form and list in the DOM
+    const form = document.getElementById('logActivityForm');
+    const activitiesList = document.getElementById('activitiesList');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting in the traditional way
+
+        // Get values from the form
+        const activityType = document.getElementById('activityType').value;
+        const activityDuration = document.getElementById('activityDuration').value;
+
+        // Create a new list item
+        const li = document.createElement('li');
+        li.textContent = `${activityType} for ${activityDuration} minutes`;
+
+        // Append the new list item to the activities list
+        activitiesList.appendChild(li);
+
+        // Optionally, clear the form fields
+        form.reset();
+    });
+});
+
+</script>
+
+<style>
+    html, body {
+    height: 100%; /* Make sure the html and body tags take up the full viewport height */
+    margin: 0; 
+  }
+  
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f8f9fa; 
+    padding: 0px;
+  }
+  
+  .container {
+    flex: 1;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px; 
+  }
+  h1, h2 {
+    color: #007bff;
+  }
+  .form-section {
+    margin-top: 30px;
+}
+  
+  #user-info {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  p {
+    color: #495057;
+  }
+  
+  #activity-cards {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+  .card {
+    width: 300px;
+    margin: 10px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative; /* Added position relative for absolute positioning */
+  }
+
+  .card-body {
+    padding: 20px;
+  }
+  h5 {
+    color: #007bff;
+    margin-bottom: 10px; /* Added margin to separate text from image */
+  }
+
+    /* Add custom styles for activity images */
+  .activity-image {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    }
+    .chart-container {
+        margin-top: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+      }
+</style>
