@@ -80,28 +80,42 @@
       deleteImage(url, image, caption, deleteBtn);
     };
 
-    imageContainer.appendChild(image);
-    imageContainer.appendChild(caption);
-    imageContainer.appendChild(deleteBtn);
+    const imageWrapper = document.createElement('div');
+    imageWrapper.appendChild(image);
+    imageWrapper.appendChild(caption);
+    imageWrapper.appendChild(deleteBtn);
+
+    // Prepend the new image at the top of the container
+    if (imageContainer.firstChild) {
+      imageContainer.insertBefore(imageWrapper, imageContainer.firstChild);
+    } else {
+      imageContainer.appendChild(imageWrapper);
+    }
   }
 
+
   
-  // Fetch images from Firebase storage and display them with the timestamp
   async function fetchImages() {
     const listRef = storageRef(storage, 'images/');
     try {
       const res = await listAll(listRef);
-      res.items.forEach((itemRef) => {
-        getDownloadURL(itemRef).then((url) => {
-          // Assuming the name format is "timestamp_filename"
-          const parts = itemRef.name.split('_');
+      const itemsWithDates = res.items.map(item => {
+        return {
+          ref: item,
+          timestamp: parseInt(item.name.split('_')[0])
+        };
+      }).sort((a, b) => b.timestamp - a.timestamp); // Sort by timestamp descending
+
+      itemsWithDates.forEach(({ ref }) => {
+        getDownloadURL(ref).then((url) => {
+          const parts = ref.name.split('_');
           if (parts.length > 1) {
             const timestamp = parseInt(parts[0]);
             const date = new Date(timestamp);
             const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-            displayImage(url, formattedDate);  // Use the timestamp as the image description
+            displayImage(url, formattedDate);
           } else {
-            displayImage(url, "Unknown time"); // Fallback text if the timestamp is missing
+            displayImage(url, "Unknown time");
           }
         });
       });
@@ -109,6 +123,7 @@
       console.error("Failed to fetch images:", error);
     }
   }
+
 
   document.addEventListener('DOMContentLoaded', function() {
     fetchImages();
@@ -118,20 +133,23 @@
 
 
   async function deleteImage(imageURL, imageElement, captionElement, deleteBtn) {
-  // Extract file name from imageURL and create a reference to the file in storage
-  const imageName = imageURL.split('/').pop().split('#')[0].split('?')[0];
-  const fileRef = storageRef(storage, `images/${imageName}`);
-  try {
-    await deleteObject(fileRef);
-    console.log('Image deleted successfully');
-    // Remove the image, caption, and delete button from the UI
-    imageElement.remove();
-    captionElement.remove();
-    deleteBtn.remove();
-  } catch (error) {
-    console.error('Error deleting image:', error);
+    
+    const decodedURL = decodeURIComponent(imageURL);    
+    const imageName = decodedURL.split('/').pop().split('?')[0]; 
+    const fileRef = storageRef(storage, `images/${imageName}`);
+
+    try {
+      await deleteObject(fileRef);
+      console.log('Image deleted successfully');
+      // Remove the image, caption, and delete button from the UI
+      imageElement.parentNode.removeChild(imageElement);
+      captionElement.parentNode.removeChild(captionElement);
+      deleteBtn.parentNode.removeChild(deleteBtn);
+    } catch (error) {
+      console.error('Error deleting image:', error);
+    }
   }
-  }
+
 
   // Function to log activity to Firebase
   async function logActivityToFirebase(activityType, activityDuration) {
