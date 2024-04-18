@@ -20,6 +20,13 @@ app.listen(PORT, () => {
 });
 
 app.get("/", async function (req, res) {
+    res.render('signin', {
+        title: 'Sign In',
+        page: 'signin'
+    });
+});
+
+app.get("/fitnessTracker", async function (req, res) {
     res.render('fitnessTracker', {
         title: 'Fitness Tracker',
         page: 'fitnesstracker'

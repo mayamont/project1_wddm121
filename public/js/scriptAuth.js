@@ -48,7 +48,7 @@ const signIn = () => {
     .then((result) => {
         //Signed IN
         document.write("You are Signed In")
-        setTimeout(() => window.location.href = "/", 1400)
+        setTimeout(() => window.location.href = "/fitnessTracker", 1400)
     })
     .catch((error) => {
         console.log(error.code)
@@ -56,3 +56,17 @@ const signIn = () => {
     })
 }
 
+const signOut = () => {
+    firebase.auth().signOut()
+    .then(() => {
+        // Sign-out successful.
+
+        document.write("You are Signed Out")
+        setTimeout(() => window.location.href = "/signIn", 1400)
+    })
+    .catch((error) => {
+        // An error happened.
+        console.log(error.code);
+        console.log(error.message);
+    });
+}
