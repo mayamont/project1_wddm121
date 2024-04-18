@@ -20,9 +20,9 @@ app.listen(PORT, () => {
 });
 
 app.get("/", async function (req, res) {
-    res.render('signin', {
+    res.render('signIn', {
         title: 'Sign In',
-        page: 'signin'
+        page: 'signIn'
     });
 });
 
@@ -56,16 +56,16 @@ app.get("/workoutGraph", async function (req, res) {
 });
 
 app.get("/signIn", async function (req, res) {
-    res.render('signin', {
+    res.render('signIn', {
         title: 'Sign In',
-        page: 'signin'
+        page: 'signIn'
     });
 });
 
 app.get("/signUp", async function (req, res) {
-    res.render('signup', {
+    res.render('signUp', {
         title: 'Sign Up',
-        page: 'signup'
+        page: 'signUp'
     });
 
 });
