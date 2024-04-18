@@ -64,44 +64,52 @@
   });
 
   function displayImage(url, subtitle) {
-  const imageContainer = document.getElementById('latestImageDisplay');
-  const image = document.createElement('img');
-  image.src = url;
-  image.className = 'img-fluid';
-  image.style.marginBottom = '10px';
+    const imageContainer = document.getElementById('latestImageDisplay');
+    const image = document.createElement('img');
+    image.src = url;
+    image.className = 'img-fluid';
+    image.style.marginBottom = '10px';
 
-  const caption = document.createElement('p');
-  caption.textContent = subtitle;
+    const caption = document.createElement('p');
+    caption.textContent = subtitle;  // Use the subtitle directly for display
 
-  const deleteBtn = document.createElement('button');
-  deleteBtn.textContent = 'Delete';
-  deleteBtn.className = 'btn btn-danger btn-sm';
-  deleteBtn.onclick = function() {
-    deleteImage(url, image, caption, deleteBtn);
-  };
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.className = 'btn btn-danger btn-sm';
+    deleteBtn.onclick = function() {
+      deleteImage(url, image, caption, deleteBtn);
+    };
 
-  imageContainer.appendChild(image);
-  imageContainer.appendChild(caption);
-  imageContainer.appendChild(deleteBtn);
+    imageContainer.appendChild(image);
+    imageContainer.appendChild(caption);
+    imageContainer.appendChild(deleteBtn);
   }
+
   
-  //fetch images from firebase storage
+  // Fetch images from Firebase storage and display them with the timestamp
   async function fetchImages() {
     const listRef = storageRef(storage, 'images/');
     try {
-        // List all items in the 'images' folder
-        const res = await listAll(listRef);
-        res.items.forEach((itemRef) => {
-            // Get the download URL for each item
-            getDownloadURL(itemRef).then((url) => {
-                displayImage(url, "Previously uploaded");
-            });
+      const res = await listAll(listRef);
+      res.items.forEach((itemRef) => {
+        getDownloadURL(itemRef).then((url) => {
+          // Assuming the name format is "timestamp_filename"
+          const parts = itemRef.name.split('_');
+          if (parts.length > 1) {
+            const timestamp = parseInt(parts[0]);
+            const date = new Date(timestamp);
+            const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+            displayImage(url, formattedDate);  // Use the timestamp as the image description
+          } else {
+            displayImage(url, "Unknown time"); // Fallback text if the timestamp is missing
+          }
         });
+      });
     } catch (error) {
-        console.error("Failed to fetch images:", error);
+      console.error("Failed to fetch images:", error);
     }
   }
-  //event listener to fetch images
+
   document.addEventListener('DOMContentLoaded', function() {
     fetchImages();
   });
