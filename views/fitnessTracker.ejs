@@ -51,16 +51,17 @@
 
   // Function to listen for new activities in Firebase and update the UI
   function displayLoggedActivities() {
-  const activitiesRef = ref(db, 'activities');
-  // Listen for new activities
-  onChildAdded(activitiesRef, (data) => {
-    // Get the activity data
-    const activity = data.val();
-    // Create a new list item for the activity
-    const li = document.createElement('li');
-    li.textContent = `${activity.type} for ${activity.duration} minutes on ${formatDate(activity.timestamp)}`;
-    // Append the new list item to the activities list
-    activitiesList.appendChild(li);
+    const activitiesRef = ref(db, 'activities');
+    // Listen for new activities
+    onChildAdded(activitiesRef, (data) => {
+      // Get the activity data
+      const activity = data.val();
+      // Create a new list item for the activity
+      const li = document.createElement('li');
+      li.textContent = `${activity.type} for ${activity.duration} minutes on ${formatDate(activity.timestamp)}`;
+      // Prepend the new list item to the activities list
+      const activitiesList = document.getElementById('activitiesList');
+      activitiesList.insertBefore(li, activitiesList.firstChild);
     });
   }
 
