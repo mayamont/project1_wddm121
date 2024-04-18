@@ -7,6 +7,7 @@
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js';
   import { getDatabase, ref, push, serverTimestamp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js';
   import { onChildAdded } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js';
+  import { remove } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js';
   // Your web app's Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyAwMd2QtlJi9A8i-ay-szs7meUk6s-m08s",
@@ -50,23 +51,47 @@
   }
 
   // Function to listen for new activities in Firebase and update the UI
+  // Function to listen for new activities in Firebase and update the UI
   function displayLoggedActivities() {
-    const activitiesRef = ref(db, 'activities');
-    // Listen for new activities
-    onChildAdded(activitiesRef, (data) => {
-      // Get the activity data
-      const activity = data.val();
-      // Create a new list item for the activity
-      const li = document.createElement('li');
-      li.textContent = `${activity.type} for ${activity.duration} minutes on ${formatDate(activity.timestamp)}`;
-      // Prepend the new list item to the activities list
-      const activitiesList = document.getElementById('activitiesList');
-      activitiesList.insertBefore(li, activitiesList.firstChild);
+  const activitiesRef = ref(db, 'activities');
+  // Listen for new activities
+  onChildAdded(activitiesRef, (data) => {
+    // Get the activity data
+    const activity = data.val();
+    // Create a new list item for the activity
+    const li = document.createElement('li');
+    li.className = 'list-group-item d-flex justify-content-between align-items-center';
+    li.textContent = `${activity.type} for ${activity.duration} minutes on ${formatDate(activity.timestamp)}`;
+
+    // Create a delete button with an icon
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn btn-danger btn-sm';
+    deleteBtn.innerHTML = '<i class="bi bi-trash-fill"></i>';
+    deleteBtn.onclick = function() {
+      deleteActivity(data.key, li); // Pass the li element to deleteActivity
+    };
+
+    // Append the delete button to the list item
+    li.appendChild(deleteBtn);
+
+    // Prepend the new list item to the activities list
+    const activitiesList = document.getElementById('activitiesList');
+    activitiesList.insertBefore(li, activitiesList.firstChild);
+  });
+  }
+
+  function deleteActivity(activityKey, listItemElement) {
+    const activityRef = ref(db, `activities/${activityKey}`);
+    remove(activityRef).then(() => {
+      console.log('Activity deleted successfully');
+      listItemElement.remove(); // Remove the list item from the DOM
+    }).catch((error) => {
+      console.error('Error deleting activity:', error);
     });
   }
 
-// Call the function to start displaying logged activities
-displayLoggedActivities();
+  // Call the function to start displaying logged activities
+  displayLoggedActivities();
 
 
 
