@@ -1,13 +1,15 @@
-<script src="https://www.gstatic.com/firebasejs/9.8.4/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.8.4/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.8.4/firebase-auth-compat.js"></script>
-<script src="../public/js/scriptAuth.js"></script>
+
 <script type="module">
   // Import the functions you need from the SDKs you need
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js';
   import { getDatabase, ref, push, serverTimestamp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js';
   import { onChildAdded } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js';
   import { remove } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js';
+  import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject, listAll } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js';
+  
+
+
+  
   // Your web app's Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyAwMd2QtlJi9A8i-ay-szs7meUk6s-m08s",
@@ -29,6 +31,99 @@
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
+  const storage = getStorage(app);
+
+  async function uploadImageToFirebase(file) {
+  // Format the timestamp and append it to the file name
+  const uploadTimestamp = new Date();
+  const timestamp = uploadTimestamp.getTime(); // Gets the current time in milliseconds
+  const newFileName = `${timestamp}_${file.name}`;
+  const storageReference = storageRef(storage, `images/${newFileName}`);
+  
+  try {
+    const snapshot = await uploadBytes(storageReference, file);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    console.log('Image uploaded successfully', downloadURL);
+    return { downloadURL, formattedDate: uploadTimestamp.toLocaleDateString() + ' ' + uploadTimestamp.toLocaleTimeString() };
+  } catch (error) {
+    console.error('Error uploading image:', error);
+  }
+  }
+
+
+  document.getElementById('imageUploadForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const fileInput = document.getElementById('activityImage');
+  if (fileInput.files.length > 0) {
+    const file = fileInput.files[0];
+    const uploadResult = await uploadImageToFirebase(file);
+    if (uploadResult) {
+      displayImage(uploadResult.downloadURL, uploadResult.formattedDate);
+    }
+  }
+  });
+
+  function displayImage(url, subtitle) {
+  const imageContainer = document.getElementById('latestImageDisplay');
+  const image = document.createElement('img');
+  image.src = url;
+  image.className = 'img-fluid';
+  image.style.marginBottom = '10px';
+
+  const caption = document.createElement('p');
+  caption.textContent = subtitle;
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.textContent = 'Delete';
+  deleteBtn.className = 'btn btn-danger btn-sm';
+  deleteBtn.onclick = function() {
+    deleteImage(url, image, caption, deleteBtn);
+  };
+
+  imageContainer.appendChild(image);
+  imageContainer.appendChild(caption);
+  imageContainer.appendChild(deleteBtn);
+  }
+  
+  //fetch images from firebase storage
+  async function fetchImages() {
+    const listRef = storageRef(storage, 'images/');
+    try {
+        // List all items in the 'images' folder
+        const res = await listAll(listRef);
+        res.items.forEach((itemRef) => {
+            // Get the download URL for each item
+            getDownloadURL(itemRef).then((url) => {
+                displayImage(url, "Previously uploaded");
+            });
+        });
+    } catch (error) {
+        console.error("Failed to fetch images:", error);
+    }
+  }
+  //event listener to fetch images
+  document.addEventListener('DOMContentLoaded', function() {
+    fetchImages();
+  });
+
+
+
+
+  async function deleteImage(imageURL, imageElement, captionElement, deleteBtn) {
+  // Extract file name from imageURL and create a reference to the file in storage
+  const imageName = imageURL.split('/').pop().split('#')[0].split('?')[0];
+  const fileRef = storageRef(storage, `images/${imageName}`);
+  try {
+    await deleteObject(fileRef);
+    console.log('Image deleted successfully');
+    // Remove the image, caption, and delete button from the UI
+    imageElement.remove();
+    captionElement.remove();
+    deleteBtn.remove();
+  } catch (error) {
+    console.error('Error deleting image:', error);
+  }
+  }
 
   // Function to log activity to Firebase
   async function logActivityToFirebase(activityType, activityDuration) {
@@ -80,6 +175,8 @@
   });
   }
 
+  
+
   function deleteActivity(activityKey, listItemElement) {
     const activityRef = ref(db, `activities/${activityKey}`);
     remove(activityRef).then(() => {
@@ -109,6 +206,8 @@
 
 
 </script>
+
+
 
 
 
@@ -184,7 +283,12 @@
       </div>
   </div>
 </div>
+<script type = "module"> // Function to upload the image to Firebase Storage
 
+
+
+
+</script>
 
 
 <style>
